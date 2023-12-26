@@ -16,6 +16,7 @@ def main(
     """
     if not os.path.exists(file):
         print(f"file {file} not found")
+
     msg = ""
 
     if n_bytes:
@@ -27,9 +28,10 @@ def main(
     if chars:
         msg += f"{get_char_count(file)} "
     
-    if (not n_bytes or not lines or not words or not chars):
-        pass
-    
+    if (not n_bytes and not lines and not words and not chars):
+        n_bytes, lines, words = get_all(file)
+        msg = f"{lines} {words} {n_bytes} "
+
     if msg != "":
         print(f"{msg}{file}")
 
@@ -59,6 +61,18 @@ def get_char_count(file):
         char_count = sum(len(line) for line in file)
 
     return char_count
+
+def get_all(file):
+    byte_count = 0
+    word_count = 0
+    line_count = 0
+    with open(file, 'rb') as file:
+        for line in file:
+            byte_count += len(line)
+            word_count += len(line.split())
+            line_count += 1
+    
+    return byte_count, line_count, word_count
 
 if __name__ == "__main__":
     typer.run(main)
