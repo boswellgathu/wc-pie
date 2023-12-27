@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Optional
 
 import typer
@@ -15,8 +16,9 @@ def main(
     """
     unix wc tool written in python
     """
-    if not os.path.exists(file):
-        print(f"file {file} not found")
+    
+    if file and not os.path.exists(file):
+        raise(f"file {file} not found")
 
     msg = ""
 
@@ -33,33 +35,48 @@ def main(
         n_bytes, lines, words = get_all(file)
         msg = f"{lines} {words} {n_bytes} "
 
+    if file:
+        msg += f"{file}"
+
     if msg != "":
-        print(f"{msg}{file}")
+        print(msg)
 
 def get_byte_count(file):
     byte_count = 0
-
-    with open(file, 'rb') as file:
-        for line in file:
-            byte_count += len(line)
+    if file:
+        with open(file, 'rb') as file:
+            for line in file:
+                byte_count += len(line)
+    else:
+        for line in sys.stdin:
+            byte_count += len(line.encode('utf-8'))
 
     return byte_count
 
 def get_line_count(file):
-    with open(file, 'r') as file:
-        line_count = sum(1 for _ in file)
+    if file:
+        with open(file, 'r') as file:
+            line_count = sum(1 for _ in file)
+    else:
+        line_count = sum(1 for _ in sys.stdin)
     
     return line_count
 
 def get_word_count(file):
-    with open(file, 'r') as file:
-        word_count = sum(len(line.split()) for line in file)
+    if file:
+        with open(file, 'r') as file:
+            word_count = sum(len(line.split()) for line in file)
+    else:
+        word_count = sum(len(line.split()) for line in sys.stdin)
 
     return word_count
 
 def get_char_count(file):
-    with open(file, 'r', encoding='utf-8-sig') as file:
-        char_count = sum(len(line) for line in file)
+    if file:
+        with open(file, 'r', encoding='utf-8-sig') as file:
+            char_count = sum(len(line) for line in file)
+    else:
+        char_count = sum(len(line) for line in sys.stdin)
 
     return char_count
 
@@ -67,9 +84,15 @@ def get_all(file):
     byte_count = 0
     word_count = 0
     line_count = 0
-    with open(file, 'rb') as file:
-        for line in file:
-            byte_count += len(line)
+    if file:
+        with open(file, 'rb') as file:
+            for line in file:
+                byte_count += len(line)
+                word_count += len(line.split())
+                line_count += 1
+    else:
+        for line in sys.stdin:
+            byte_count += len(line.encode('utf-8'))
             word_count += len(line.split())
             line_count += 1
     
