@@ -1,11 +1,12 @@
 import os
+from typing import Optional
 
 import typer
 from typing_extensions import Annotated
 
 
 def main(
-    file: str,
+    file: Annotated[Optional[str], typer.Argument()] = None,
     n_bytes: Annotated[bool, typer.Option("-c", help="return bytes of file provided.")] = False,
     lines: Annotated[bool, typer.Option("-l", help="return number of lines in the file provided")] = False,
     words: Annotated[bool, typer.Option("-w", help="return number of words in the file provided")] = False,
