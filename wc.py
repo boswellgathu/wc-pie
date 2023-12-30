@@ -21,12 +21,12 @@ def main(
     if message:
         sys.stdout.write(message)
 
-def check_file_exists(file_path):
+def check_file_exists(file_path: str):
     """Check if the file exists"""
     if file_path and not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} not found")
 
-def generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars):
+def generate_wc_message(file_path: Optional[str], count_bytes: bool, count_lines: bool, count_words: bool, count_chars: bool) -> str:
     """Generate the 'wc' message based on selected options"""
     message = ""
     if count_bytes:
@@ -47,7 +47,7 @@ def generate_wc_message(file_path, count_bytes, count_lines, count_words, count_
 
     return message
 
-def get_byte_count(file):
+def get_byte_count(file: Optional[str]) -> int:
     byte_count = 0
     if file:
         with open(file, 'rb') as file:
@@ -59,7 +59,7 @@ def get_byte_count(file):
 
     return byte_count
 
-def get_line_count(file):
+def get_line_count(file: Optional[str]) -> int:
     if file:
         with open(file, 'r') as file:
             line_count = sum(1 for _ in file)
@@ -68,7 +68,7 @@ def get_line_count(file):
     
     return line_count
 
-def get_word_count(file):
+def get_word_count(file: Optional[str]) -> int:
     if file:
         with open(file, 'r') as file:
             word_count = sum(len(line.split()) for line in file)
@@ -77,7 +77,7 @@ def get_word_count(file):
 
     return word_count
 
-def get_char_count(file):
+def get_char_count(file: Optional[str]) -> int:
     if file:
         with open(file, 'r', encoding='utf-8-sig') as file:
             char_count = sum(len(line) for line in file)
@@ -86,7 +86,7 @@ def get_char_count(file):
 
     return char_count
 
-def get_all(file):
+def get_all(file: Optional[str]) -> int:
     byte_count = 0
     word_count = 0
     line_count = 0
