@@ -26,7 +26,13 @@ def check_file_exists(file_path: str):
     if file_path and not os.path.exists(file_path):
         raise FileNotFoundError(f"File {file_path} not found")
 
-def generate_wc_message(file_path: Optional[str], count_bytes: bool, count_lines: bool, count_words: bool, count_chars: bool) -> str:
+def generate_wc_message(
+        file_path: Optional[str],
+        count_bytes: bool, 
+        count_lines: bool, 
+        count_words: bool, 
+        count_chars: bool
+    ) -> str:
     """Generate the 'wc' message based on selected options"""
     message = ""
     if count_bytes:
