@@ -7,39 +7,45 @@ from typing_extensions import Annotated
 
 
 def main(
-    file: Annotated[Optional[str], typer.Argument()] = None,
-    n_bytes: Annotated[bool, typer.Option("-c", help="return bytes of file provided.")] = False,
-    lines: Annotated[bool, typer.Option("-l", help="return number of lines in the file provided")] = False,
-    words: Annotated[bool, typer.Option("-w", help="return number of words in the file provided")] = False,
-    chars: Annotated[bool, typer.Option("-m", help="return number of characters in the file provided")] = False,
+    file_path: Annotated[Optional[str], typer.Argument()] = None,
+    count_bytes: Annotated[bool, typer.Option("-c", help="Return bytes of file provided.")] = False,
+    count_lines: Annotated[bool, typer.Option("-l", help="Return number of lines in the file provided.")] = False,
+    count_words: Annotated[bool, typer.Option("-w", help="Return number of words in the file provided.")] = False,
+    count_chars: Annotated[bool, typer.Option("-m", help="Return number of characters in the file provided.")] = False,
 ):
-    """
-    unix wc tool written in python
-    """
+    """Unix wc tool written in Python"""
+    check_file_exists(file_path)
     
-    if file and not os.path.exists(file):
-        raise FileNotFoundError(f"file {file} not found")
-
-    msg = ""
-
-    if n_bytes:
-        msg += f"\t{get_byte_count(file)}"
-    if lines:
-        msg += f"\t{get_line_count(file)}"
-    if words:
-        msg += f"\t{get_word_count(file)}"
-    if chars:
-        msg += f"\t{get_char_count(file)}"
+    message = generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars)
     
-    if (not n_bytes and not lines and not words and not chars):
-        n_bytes, lines, words = get_all(file)
-        msg = f"\t{lines}\t{words}\t{n_bytes} "
+    if message:
+        print(message)
 
-    if file:
-        msg += f"\t{file}"
+def check_file_exists(file_path):
+    """Check if the file exists"""
+    if file_path and not os.path.exists(file_path):
+        raise FileNotFoundError(f"File {file_path} not found")
 
-    if msg != "":
-        sys.stdout.write(msg)
+def generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars):
+    """Generate the 'wc' message based on selected options"""
+    message = ""
+    if count_bytes:
+        message += f"\t{get_byte_count(file_path)}"
+    if count_lines:
+        message += f"\t{get_line_count(file_path)}"
+    if count_words:
+        message += f"\t{get_word_count(file_path)}"
+    if count_chars:
+        message += f"\t{get_char_count(file_path)}"
+
+    if not any([count_bytes, count_lines, count_words, count_chars]):
+        bytes_count, lines_count, words_count = get_all(file_path)
+        message = f"\t{lines_count}\t{words_count}\t{bytes_count} "
+
+    if file_path:
+        message += f"\t{file_path}"
+
+    return message
 
 def get_byte_count(file):
     byte_count = 0
