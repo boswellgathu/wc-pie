@@ -19,7 +19,7 @@ def main(
     message = generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars)
     
     if message:
-        print(message)
+        sys.stdout.write(message)
 
 def check_file_exists(file_path):
     """Check if the file exists"""
