@@ -18,28 +18,28 @@ def main(
     """
     
     if file and not os.path.exists(file):
-        raise(f"file {file} not found")
+        raise FileNotFoundError(f"file {file} not found")
 
     msg = ""
 
     if n_bytes:
-        msg += f"{get_byte_count(file)} "
+        msg += f"\t{get_byte_count(file)}"
     if lines:
-        msg += f"{get_line_count(file)} "
+        msg += f"\t{get_line_count(file)}"
     if words:
-        msg += f"{get_word_count(file)} "
+        msg += f"\t{get_word_count(file)}"
     if chars:
-        msg += f"{get_char_count(file)} "
+        msg += f"\t{get_char_count(file)}"
     
     if (not n_bytes and not lines and not words and not chars):
         n_bytes, lines, words = get_all(file)
-        msg = f"{lines} {words} {n_bytes} "
+        msg = f"\t{lines}\t{words}\t{n_bytes} "
 
     if file:
-        msg += f"{file}"
+        msg += f"\t{file}"
 
     if msg != "":
-        print(msg)
+        sys.stdout.write(msg)
 
 def get_byte_count(file):
     byte_count = 0
