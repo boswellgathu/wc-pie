@@ -1,9 +1,8 @@
 import os
 import sys
-from typing import Optional
+from typing import Annotated, Optional
 
 import typer
-from typing_extensions import Annotated
 
 
 def main(
