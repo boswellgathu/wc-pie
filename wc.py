@@ -13,17 +13,26 @@ def main(
     count_chars: Annotated[bool, typer.Option("-m", help="Return number of characters in the file provided.")] = False,
 ):
     """Unix wc tool written in Python"""
-    check_file_exists(file_path)
     
-    message = generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars)
+    message = ""
+    try:
+        message = generate_wc_message(file_path, count_bytes, count_lines, count_words, count_chars)
+    except FileNotFoundError as e:
+        sys.stderr.write(f"wc: {e.strerror}: '{file_path}'\n")
+        sys.exit(1)
     
-    if message:
-        sys.stdout.write(message)
+    except PermissionError as e:
+        sys.stderr.write(f"wc: Permission denied for file '{file_path}'\n")
+        sys.exit(1)
+    
+    except Exception as e:
+        sys.stderr.write(f"wc: An unexpected error occurred: {str(e)}\n")
+        sys.exit(1)
 
-def check_file_exists(file_path: str):
-    """Check if the file exists"""
-    if file_path and not os.path.exists(file_path):
-        raise FileNotFoundError(f"File {file_path} not found")
+    if message:
+        message += "\n"
+        sys.stdout.write(message)
+        sys.exit(0)
 
 def generate_wc_message(
         file_path: Optional[str],

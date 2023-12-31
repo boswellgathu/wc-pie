@@ -13,6 +13,7 @@ def test_wc_option_returns_expected_value(option, value):
     output, _ = process.communicate()
     actual_output = output.decode().strip()
 
+    assert process.returncode == 0
     assert actual_output == expected_output
 
 def test_wc_no_options_returns_default():
@@ -22,6 +23,8 @@ def test_wc_no_options_returns_default():
     process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output, _ = process.communicate()
     actual_output = output.decode().strip()
+    
+    assert process.returncode == 0
     assert actual_output == expected_output
 
 def test_wc_can_read_from_stdin():
@@ -33,3 +36,20 @@ def test_wc_can_read_from_stdin():
     output, _ = process.communicate()
     actual_output = output.decode().strip()
     assert actual_output == expected_output
+
+@pytest.mark.parametrize(
+    "file_path, expected_error",
+    [
+        ("notfound.txt", b"wc: No such file or directory: 'notfound.txt'"),
+        ("./tests", b"wc: An unexpected error occurred:"),
+    ],
+)
+def test_wc_error_handling(file_path, expected_error):
+    command = f"python wc.py {file_path}"
+
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+
+    assert process.returncode != 0
+    assert expected_error in stderr
+
